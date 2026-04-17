@@ -3,7 +3,7 @@ name: Deploy RADIUS Server
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
