@@ -1,0 +1,50 @@
+name: Deploy RADIUS Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy RADIUS server to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Stop and remove existing RADIUS containers
+            cd /root/SpotPay/radius-system 2>/dev/null && docker-compose down --remove-orphans || true
+            
+            # Create standalone RADIUS directory
+            mkdir -p /root/radius-server-standalone
+            cd /root/radius-server-standalone
+            
+            # Clone/update the standalone RADIUS server
+            if [ -d ".git" ]; then
+              git pull origin main
+            else
+              git clone https://github.com/Ssebaleke/radius-server-standalone.git .
+            fi
+            
+            # Build and start containers
+            docker-compose down --remove-orphans || true
+            docker-compose up -d --build
+            
+            # Wait for services to start
+            sleep 10
+            
+            # Run database migrations
+            docker-compose exec -T radius-web python manage.py migrate
+            
+            # Collect static files
+            docker-compose exec -T radius-web python manage.py collectstatic --noinput
+            
+            echo "RADIUS server deployed successfully"
