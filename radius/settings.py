@@ -17,6 +17,13 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8082'
 ]
 
+# Additional security settings
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+USE_TZ = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
