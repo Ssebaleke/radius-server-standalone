@@ -5,8 +5,8 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = config('RADIUS_SECRET_KEY', default='spotpay-radius-secret-key-2024')
+ALLOWED_HOSTS = ['*']  # Allow all hosts for now
 DEBUG = True
-ALLOWED_HOSTS = ['*']
 
 # Fix CSRF for IP access
 CSRF_TRUSTED_ORIGINS = [
@@ -38,7 +38,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',  # Temporarily disabled
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
